@@ -1,0 +1,35 @@
+version: "2.2"
+
+services:
+  es:
+    image: elasticsearch:7.12.1
+    container_name: es
+    environment:
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "discovery.type=single-node"
+    volumes:
+      - E:\\docker-volumes\\elasticsearch\\data:/usr/share/elasticsearch/data
+      - E:\\docker-volumes\\elasticsearch\\plugins:/usr/share/elasticsearch/plugins
+    networks: 
+      - mynet
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    restart: always
+  kibana:
+    image: kibana:7.12.1
+    container_name: kibana
+    environment:
+      ELASTICSEARCH_HOSTS: http://es:9200
+      #- "elasticsearch.hosts=http://localhost:9200"
+    depends_on:
+      - es
+    ports:
+      - 5601:5601
+    networks:
+      - mynet
+    restart: always
+
+networks:
+  mynet:
+    driver: bridge
